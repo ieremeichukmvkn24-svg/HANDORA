@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero банер -->
+<section class="hero">
+    <h1>Твори, які мають свою історію</h1>
+    <p>Відкривай світ авторських речей, створених українськими майстрами з любов'ю до деталей</p>
+    <a href="{% url 'catalog:product_list' %}" class="btn">Знайти щось особливе</a>
+</section>
+
+<!-- Нові надходження -->
+<section style="padding: 3rem 5% 0;">
+    <h2 style="font-size: 2rem; margin-bottom: 1rem;">Нові надходження</h2>
+</section>
+
+<div class="product-grid">
+    {% for product in new_products %}
+        <a href="{% url 'catalog:product_detail' product.slug %}" class="product-card">
+            {% if product.get_main_image %}
+                <img src="{{ product.get_main_image }}" alt="{{ product.title }}" class="product-image">
+            {% else %}
+                <div class="product-image" style="display: flex; align-items: center; justify-content: center; color: #999;">Фото відсутнє</div>
+            {% endif %}
+            <div class="product-info">
+                <h3 class="product-title">{{ product.title }}</h3>
+                <div class="product-shop">{{ product.shop.name }}</div>
+                <div class="product-price">{{ product.price }} ₴</div>
+            </div>
+        </a>
+    {% empty %}
+        <p>Товарів поки немає. Будьте першими, хто додасть товар!</p>
+    {% endfor %}
+</div>
+{% endblock %}

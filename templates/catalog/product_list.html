@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Каталог товарів - HANDORA{% endblock %}
+
+{% block content %}
+<div style="display: flex; padding: 2rem 5%; gap: 2rem;">
+    <!-- Бокова панель фільтрів -->
+    <aside style="width: 250px; flex-shrink: 0;">
+        <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">Категорії</h3>
+        <ul style="list-style: none;">
+            {% for cat in categories %}
+                <li style="margin-bottom: 0.5rem;">
+                    <a href="?category={{ cat.slug }}" style="color: var(--color-text-main); transition: 0.2s;">
+                        {{ cat.name }}
+                    </a>
+                </li>
+            {% endfor %}
+            <li style="margin-top: 1rem;">
+                <a href="{% url 'catalog:product_list' %}" style="color: var(--color-accent-orange); font-weight: 600;">Скинути фільтри</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Основна сітка товарів -->
+    <div style="flex-grow: 1;">
+        <h2 style="margin-bottom: 1rem;">Усі товари</h2>
+        <div class="product-grid" style="padding: 0;">
+            {% for product in products %}
+               <a href="{% url 'catalog:product_detail' product.slug %}" class="product-card">
+                    {% if product.get_main_image %}
+                        <img src="{{ product.get_main_image }}" alt="{{ product.title }}" class="product-image">
+                    {% else %}
+                        <div class="product-image" style="display: flex; align-items: center; justify-content: center; color: #999;">Фото відсутнє</div>
+                    {% endif %}
+                    <div class="product-info">
+                        <h3 class="product-title">{{ product.title }}</h3>
+                        <div class="product-shop">{{ product.shop.name }}</div>
+                        <div class="product-price">{{ product.price }} ₴</div>
+                    </div>
+                </a>
+            {% empty %}
+                <p>За вашим запитом нічого не знайдено.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Пагінація -->
+        {% if page_obj.has_other_pages %}
+        <div style="margin-top: 2rem; display: flex; gap: 0.5rem; justify-content: center;">
+            {% for num in page_obj.paginator.page_range %}
+                <a href="?page={{ num }}" style="padding: 0.5rem 1rem; border-radius: 4px; background: {% if page_obj.number == num %}var(--color-primary-dark){% else %}var(--color-bg-white){% endif %}; color: {% if page_obj.number == num %}#fff{% else %}var(--color-text-main){% endif %}; border: 1px solid var(--color-border);">
+                    {{ num }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

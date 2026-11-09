@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ artisan.name }} - HANDORA{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 3rem auto; padding: 0 1rem;">
+    <!-- Профіль майстра -->
+    <!-- ВИПРАВЛЕНО: Замінив background: white на var(--color-bg-white) та додав рамку -->
+    <div style="background: var(--color-bg-white); border: 1px solid var(--color-border); border-radius: 8px; padding: 2rem; display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 3rem;">
+        <div>
+            {% if artisan.photo %}
+                <img src="{{ artisan.photo.url }}" alt="{{ artisan.name }}" style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover; border: 1px solid var(--color-border);">
+            {% else %}
+                <div style="width: 160px; height: 160px; border-radius: 50%; border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; font-size: 4rem;">🎨</div>
+            {% endif %}
+        </div>
+        
+        <div style="flex: 1; min-width: 250px;">
+            <!-- ВИПРАВЛЕНО: Категорія тепер адаптивна -->
+            <span style="border: 1px solid var(--color-border); padding: 4px 12px; border-radius: 15px; font-size: 0.85rem; color: var(--color-text-main); opacity: 0.8;">{{ artisan.category }}</span>
+            <!-- ВИПРАВЛЕНО: Колір імені та опису підлаштовується під тему -->
+            <h1 style="color: var(--color-text-main); margin: 0.8rem 0 0.5rem 0;">{{ artisan.name }}</h1>
+            <p style="color: var(--color-text-main); opacity: 0.8; font-size: 0.95rem; line-height: 1.6;">{{ artisan.bio|default:"Опис майстерні відсутній." }}</p>
+        </div>
+    </div>
+
+    <!-- Товари майстра -->
+    <h2 style="color: var(--color-text-main); margin-bottom: 1.5rem;">Товари майстра ({{ products|length }})</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;">
+        {% for product in products %}
+            <!-- ВИПРАВЛЕНО: Картки товарів адаптивні -->
+            <div style="background: var(--color-bg-white); border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; padding: 1rem;">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 4px;">
+                {% endif %}
+                <h3 style="color: var(--color-text-main); font-size: 1.1rem; margin: 0.8rem 0 0.4rem 0;">{{ product.name }}</h3>
+                <p style="font-weight: bold; color: var(--color-accent-orange, #ff8c00); margin-bottom: 0.8rem;">{{ product.price }} ₴</p>
+                <a href="{% url 'catalog:product_detail' product.slug %}" style="display: block; text-align: center; padding: 0.5rem; background: var(--color-accent-orange, #ff8c00); color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                    Переглянути
+                </a>
+            </div>
+        {% empty %}
+            <p style="color: var(--color-text-main); opacity: 0.8; grid-column: 1/-1;">У цього майстра поки немає доданих товарів.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
