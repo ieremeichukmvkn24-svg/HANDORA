@@ -10,8 +10,8 @@
 
     {% if cart|length > 0 %}
         <!-- ВИПРАВЛЕНО: Фон кошика та рамка -->
-        <div style="background: var(--color-bg-white); border: 1px solid var(--color-border); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; color: var(--color-text-main);">
+        <div class="cart-table-wrap" style="background: var(--color-bg-white); border: 1px solid var(--color-border); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden;">
+            <table class="cart-table" style="width: 100%; border-collapse: collapse; text-align: left; color: var(--color-text-main);">
                 <!-- ВИПРАВЛЕНО: Шапка таблиці -->
                 <thead style="background: var(--color-bg-white); border-bottom: 2px solid var(--color-border);">
                     <tr>
@@ -27,9 +27,9 @@
                         {% with product=item.product %}
                         <!-- ВИПРАВЛЕНО: Рядки таблиці -->
                         <tr style="border-bottom: 1px solid var(--color-border);">
-                            <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                            <td class="cart-product" data-label="Товар" style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
                                 {% if product.image %}
-                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);">
+                                    <img src="{{ product.image.url }}" alt="{{ product.title }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);">
                                 {% endif %}
                                 <span style="font-weight: 500;">{{ product.name }}</span>
                             </td>
@@ -43,8 +43,8 @@
                                     <button type="submit" style="padding: 4px 8px; background: var(--color-border); color: var(--color-text-main); border: none; border-radius: 4px; cursor: pointer;">↻</button>
                                 </form>
                             </td>
-                            <td style="padding: 1rem;">{{ item.price }} грн</td>
-                            <td style="padding: 1rem; font-weight: 600;">{{ item.total_price }} грн</td>
+                            <td data-label="Ціна" style="padding: 1rem;">{{ item.price }} грн</td>
+                            <td data-label="Сума" style="padding: 1rem; font-weight: 600;">{{ item.total_price }} грн</td>
                             <td style="padding: 1rem;">
                                 <!-- Форма видалення -->
                                 <form action="{% url 'cart:cart_remove' product.id %}" method="post">
@@ -59,13 +59,13 @@
             </table>
             
             <!-- ВИПРАВЛЕНО: Підвал таблиці з загальною сумою -->
-            <div style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-white); border-top: 1px solid var(--color-border);">
+            <div class="cart-total" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; background: var(--color-bg-white); border-top: 1px solid var(--color-border);">
                 <h3 style="margin: 0; color: var(--color-text-main);">Загальна вартість:</h3>
                 <h2 style="margin: 0; color: var(--color-accent-orange, #ff8c00);">{{ cart.get_total_price }} грн</h2>
             </div>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+        <div class="cart-actions" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
             <!-- ВИПРАВЛЕНО: Кнопка "Продовжити покупки" -->
             <a href="{% url 'catalog:product_list' %}" style="padding: 0.8rem 1.5rem; text-decoration: none; color: var(--color-text-main); background: var(--color-border); border-radius: 4px; font-weight: 500;">Продовжити покупки</a>
             <a href="{% url 'orders:order_create' %}" style="padding: 0.8rem 1.5rem; text-decoration: none; color: white; background: var(--color-accent-orange, #ff8c00); border-radius: 4px; font-weight: 600;">Оформити замовлення</a>
