@@ -48,7 +48,8 @@ jobs:
                   page.goto('http://127.0.0.1:8000'+route,wait_until='domcontentloaded')
                   page.screenshot(path=str(dest / f'{name}_mobile_390px.png'),full_page=True)
                   if page.locator('body').evaluate('(el) => el.scrollWidth > window.innerWidth + 5'):
-                      raise AssertionError(f'Horizontal overflow on {route}')
+                      offenders = page.evaluate("""() => [...document.querySelectorAll('*')].filter(el => el.getBoundingClientRect().right > innerWidth + 5).slice(0,10).map(el => [el.tagName,el.className,Math.round(el.getBoundingClientRect().right)])""")
+                      raise AssertionError(f'Horizontal overflow on {route}: {offenders}')
               browser.close()
           print('Captured 4 real Django pages at 390px width without horizontal overflow')
           PY
