@@ -81,3 +81,36 @@ a { text-decoration: none; color: inherit; }
 }
 .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
 .hero p { font-size: 1.25rem; color: var(--color-accent-blue); margin-bottom: 2rem; }
+
+/* Mobile layouts: navigation, catalog, product, cart and checkout. */
+.navbar nav { min-width: 0; }
+.catalog-products { min-width: 0; }
+.cart-table-wrap { overflow-x: auto; }
+
+@media (max-width: 700px) {
+  .navbar { flex-wrap: wrap; gap: .8rem; padding: 1rem; }
+  .navbar nav { display: flex; flex-wrap: wrap; gap: .7rem 1rem !important; width: 100%; }
+  .navbar nav a, .navbar nav button { margin-left: 0; font-size: .9rem; }
+  .logo { font-size: 1.3rem; }
+  .catalog-layout { flex-direction: column !important; padding: 1rem !important; gap: 1rem !important; }
+  .catalog-layout aside { width: 100% !important; }
+  .catalog-layout aside ul { display: flex; flex-wrap: wrap; gap: .4rem 1rem; }
+  .catalog-layout aside li { margin: 0 !important; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 1rem; }
+  .product-detail-layout { grid-template-columns: minmax(0, 1fr) !important; gap: 1.25rem !important; }
+  .product-detail-title { font-size: 1.8rem !important; }
+  .cart-table { width: 100% !important; }
+  .cart-table thead { display: none; }
+  .cart-table tbody, .cart-table tr, .cart-table td { display: block !important; width: 100%; }
+  .cart-table tr { padding: .7rem; }
+  .cart-table td { display: flex !important; align-items: center; justify-content: space-between; padding: .45rem !important; gap: .5rem; }
+  .cart-table td::before { content: attr(data-label); font-weight: 600; }
+  .cart-table .cart-product { align-items: center; }
+  .cart-table td.cart-product::before { display: none; }
+  .cart-actions { flex-direction: column; align-items: stretch; }
+  .cart-actions a { text-align: center; }
+  .cart-total { gap: 1rem; flex-wrap: wrap; }
+  .handora-checkout { grid-template-columns: 1fr !important; }
+  .hero h1 { font-size: 2rem; }
+  .hero { padding: 3rem 1rem; }
+}
