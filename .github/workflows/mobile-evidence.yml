@@ -1,0 +1,59 @@
+name: Mobile UI evidence
+on:
+  workflow_dispatch:
+  push:
+    branches: [docs/mobile-visual-evidence]
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dependencies
+        run: |
+          python -m pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
+      - name: Prepare demo database
+        env:
+          DJANGO_SETTINGS_MODULE: config.test_settings
+        run: |
+          python manage.py migrate --noinput
+          python manage.py shell -c "from artisans.models import Artisan; from catalog.models import Category,Product; a=Artisan.objects.create(name='HANDORA Ceramic',slug='handora-ceramic',category='Кераміка'); c=Category.objects.create(name='Кераміка',slug='ceramics'); Product.objects.create(shop=a,category=c,title='Керамічна чашка',slug='ceramic-cup',description='Авторська керамічна чашка ручної роботи',price=450,stock=7,is_active=True)"
+      - name: Run Django and capture actual mobile pages
+        env:
+          DJANGO_SETTINGS_MODULE: config.test_settings
+        run: |
+          python manage.py runserver 127.0.0.1:8000 --noreload >/tmp/handora.log 2>&1 &
+          python - <<'PY'
+          import time, urllib.request
+          for attempt in range(40):
+              try:
+                  urllib.request.urlopen('http://127.0.0.1:8000/', timeout=2)
+                  break
+              except Exception:
+                  time.sleep(1)
+          else:
+              raise RuntimeError('Django failed to start')
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          dest = Path('mobile-evidence')
+          dest.mkdir(exist_ok=True)
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page(viewport={'width': 390, 'height': 844}, device_scale_factor=1)
+              for name, route in [('catalog','/'),('product','/product/ceramic-cup/'),('cart','/cart/'),('register','/accounts/register/')]:
+                  page.goto('http://127.0.0.1:8000'+route,wait_until='domcontentloaded')
+                  page.screenshot(path=str(dest / f'{name}_mobile_390px.png'),full_page=True)
+                  if page.locator('body').evaluate('(el) => el.scrollWidth > window.innerWidth + 5'):
+                      raise AssertionError(f'Horizontal overflow on {route}')
+              browser.close()
+          print('Captured 4 real Django pages at 390px width without horizontal overflow')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: handora-mobile-390px
+          path: mobile-evidence/*.png
+          retention-days: 7
