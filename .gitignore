@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# Databases and generated assets
+db.sqlite3
+*.sqlite3
+staticfiles/
+
+# Local tooling and system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
