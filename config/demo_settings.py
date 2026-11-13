@@ -7,3 +7,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'demo_mobile.sqlite3',
     },
 }
+
+# Serve static files through Django's development server for screenshot capture only.
+DEBUG = True
