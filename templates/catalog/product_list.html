@@ -3,7 +3,7 @@
 {% block title %}Каталог товарів - HANDORA{% endblock %}
 
 {% block content %}
-<div style="display: flex; padding: 2rem 5%; gap: 2rem;">
+<div class="catalog-layout" style="display: flex; padding: 2rem 5%; gap: 2rem;">
     <!-- Бокова панель фільтрів -->
     <aside style="width: 250px; flex-shrink: 0;">
         <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">Категорії</h3>
@@ -22,7 +22,7 @@
     </aside>
 
     <!-- Основна сітка товарів -->
-    <div style="flex-grow: 1;">
+    <div class="catalog-products" style="flex-grow: 1;">
         <h2 style="margin-bottom: 1rem;">Усі товари</h2>
         <div class="product-grid" style="padding: 0;">
             {% for product in products %}
