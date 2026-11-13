@@ -114,3 +114,12 @@ a { text-decoration: none; color: inherit; }
   .hero h1 { font-size: 2rem; }
   .hero { padding: 3rem 1rem; }
 }
+
+@media (max-width: 700px) {
+  .navbar, .navbar nav { min-width: 0; max-width: 100%; }
+  .navbar nav { flex-wrap: wrap !important; width: 100% !important; }
+  .navbar nav > * { flex-shrink: 1; min-width: 0; }
+  .catalog-layout { width: 100%; max-width: 100%; }
+  .catalog-layout > aside, .catalog-products { display: block; width: 100% !important; max-width: 100%; min-width: 0; }
+  .catalog-products .product-grid { max-width: 100%; min-width: 0; }
+}
