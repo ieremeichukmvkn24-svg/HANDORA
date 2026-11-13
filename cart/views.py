@@ -11,7 +11,7 @@ def cart_add(request, product_id):
     product = get_object_or_404(Product, pk=product_id, is_active=True)
     try:
         quantity = int(request.POST.get('quantity', '1'))
-        Cart(request).add(product, quantity=quantity)
+        Cart(request).add(product, quantity=quantity, override_quantity=request.POST.get("override") == "1")
     except (ValueError, TypeError) as exc:
         return HttpResponseBadRequest(str(exc))
     return redirect('cart:cart_detail')
