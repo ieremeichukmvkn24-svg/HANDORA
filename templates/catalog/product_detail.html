@@ -13,7 +13,7 @@
     </nav>
 
     <!-- Основний блок товару -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 4rem;">
+    <div class="product-detail-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 4rem;">
         
         <!-- Галерея фотографій -->
         <div>
@@ -36,7 +36,7 @@
 
         <!-- Інформація про товар -->
         <div>
-            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--color-primary-dark);">{{ product.title }}</h1>
+            <h1 class="product-detail-title" style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--color-primary-dark);">{{ product.title }}</h1>
             
             <div style="font-size: 1.1rem; color: #666; margin-bottom: 1.5rem;">
                 Майстерня: <a href="#" style="color: var(--color-accent-orange); font-weight: 500;">{{ product.shop.name }}</a>
