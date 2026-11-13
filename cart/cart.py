@@ -1,68 +1,64 @@
-# cart/cart.py
 from decimal import Decimal
+
 from django.conf import settings
 from catalog.models import Product
 
+
 class Cart:
     def __init__(self, request):
-        """Ініціалізація кошика."""
         self.session = request.session
-        cart = self.session.get(settings.CART_SESSION_ID)
-        
-        if not cart:
-            # Зберігаємо порожній кошик у сесії
-            cart = self.session[settings.CART_SESSION_ID] = {}
-            
-        self.cart = cart
+        self.cart = self.session.setdefault(settings.CART_SESSION_ID, {})
 
     def add(self, product, quantity=1, override_quantity=False):
-        """Додавання товару в кошик або оновлення його кількості."""
-        product_id = str(product.id)
-        
-        if product_id not in self.cart:
-            self.cart[product_id] = {'quantity': 0, 'price': str(product.price)}
-            
-        if override_quantity:
-            self.cart[product_id]['quantity'] = quantity
-        else:
-            self.cart[product_id]['quantity'] += quantity
-            
+        if isinstance(quantity, bool) or not isinstance(quantity, int) or quantity <= 0:
+            raise ValueError('Кількість товару має бути додатним цілим числом.')
+        if not product.is_active or product.stock <= 0:
+            raise ValueError('Товар недоступний.')
+
+        product_id = str(product.pk)
+        current = self.cart.get(product_id, {}).get('quantity', 0)
+        new_quantity = quantity if override_quantity else current + quantity
+        if new_quantity > product.stock:
+            raise ValueError('Недостатньо товару на складі.')
+
+        self.cart[product_id] = {
+            'quantity': new_quantity,
+            'price': str(product.price),
+        }
         self.save()
 
     def save(self):
-        """Позначаємо сесію як "змінену", щоб Django її зберіг."""
         self.session.modified = True
 
     def remove(self, product):
-        """Видалення товару з кошика."""
-        product_id = str(product.id)
-        if product_id in self.cart:
-            del self.cart[product_id]
+        key = str(product.pk)
+        if key in self.cart:
+            del self.cart[key]
             self.save()
 
     def __iter__(self):
-        """Перебір товарів у кошику та отримання об'єктів Product з бази даних."""
-        product_ids = self.cart.keys()
-        products = Product.objects.filter(id__in=product_ids)
-        
-        cart = self.cart.copy()
+        products = Product.objects.filter(pk__in=self.cart.keys())
         for product in products:
-            cart[str(product.id)]['product'] = product
-            
-        for item in cart.values():
-            item['price'] = Decimal(item['price'])
-            item['total_price'] = item['price'] * item['quantity']
-            yield item
+            item = self.cart[str(product.pk)]
+            price = Decimal(item['price'])
+            quantity = item['quantity']
+            yield {
+                'product': product,
+                'quantity': quantity,
+                'price': price,
+                'total_price': price * quantity,
+            }
 
     def __len__(self):
-        """Підрахунок загальної кількості товарів у кошику."""
         return sum(item['quantity'] for item in self.cart.values())
 
     def get_total_price(self):
-        """Підрахунок загальної вартості кошика."""
-        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+        return sum(
+            (Decimal(item['price']) * item['quantity'] for item in self.cart.values()),
+            Decimal('0.00'),
+        )
 
     def clear(self):
-        """Очищення кошика."""
-        del self.session[settings.CART_SESSION_ID]
+        self.session.pop(settings.CART_SESSION_ID, None)
+        self.cart = {}
         self.save()
