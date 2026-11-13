@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('artisans', '0002_remove_shop_user_artisan'),
         ('catalog', '0002_alter_product_shop'),
+        ('orders', '0002_remove_cartitem_cart_remove_cartitem_product_and_more'),
     ]
 
     operations = [
