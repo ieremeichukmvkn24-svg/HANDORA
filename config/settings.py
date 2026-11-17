@@ -7,7 +7,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev')
+SECRET_KEY = os.environ['SECRET_KEY']  # Set only in a private .env or environment
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
